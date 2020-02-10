@@ -670,8 +670,8 @@ def test_unicode_tree_debug():
     tree.add_visitor(py_trees.visitors.DisplaySnapshotVisitor())
     tree.setup()
     tree.tick()
-    tree.tick()
-    tree.tick()
+    # tree.tick()
+    # tree.tick()
     # If we got all the way here, that suffices. If we really wished,
     # we could catch stdout and check that.
     assert(True)
