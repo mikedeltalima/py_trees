@@ -1,0 +1,54 @@
+1. Condition class
+2. Sequence of goal_conditions
+3. Implmenent 1, 4) RefineActions (ground actions in some reality)
+4. Implement 2) GetConditionToExpand (if some action returns failure
+5. Implement ExpandTree
+6. Implement 4) GetAllActionTemplates for above
+6. Implement 3) IncreasePriority
+
+
+Algorithm from "Towards blended reactive planning and acting using behavior trees"
+
+1) Refine Actions
+(Line 5): This process implements an action refinement as described in [31],
+that is, we map template actions and conditions (e.g. Place(c, Pg)) into grounded actions and conditions
+(e.g. Place(c, [0, 0])). Grounded actions can be executed by the robot. We assume that a valid action
+refinement always exists for the entire BT, see Section V-F.
+
+
+2) Get Deepest Failed Condition and Expand Tree
+(Lines 9 and 10) : If the BT returns failure, Line 9 finds the deepest condition returning failure.
+This will then be expanded, as shown in the example of Figure 3. T is expanded until it can perform an action
+(i.e. until T contains an action template whose condition are supported by the initial state). If there exists
+more than one valid action that satisfies a condition, their respective trees (sequence composition of the action
+and its conditions) are collected in a fallback composition, which implements the different options the agent has
+to satisfy such a condition. As discussed in Section V-F, finding an optimal action sequence is beyond the scope of the paper.
+
+3) Conflicts and Increased Priority
+(Lines 11 and 12): Similar to any STRIPS-style planner, adding
+a new action in the plan can cause a conflict (i.e. the execution of this new action creates
+a missmatch between effects and preconditions as the plan progresses). In our framework, this
+situation is checked in Line 11 by analyzing the conditions of the new action added with the
+effects of the actions that the subtree executes before executing the new action. If this effects/conditions
+pair is in conflict, the goal will not be reached. An example of this situation is described
+in Example 2 below. Again, following the approach used in partial ordered planning [16], we resolve
+this conflict by finding the correct action order. Exploiting the structure of BTs we can do so by
+moving the tree composed by the new action and its condition leftward (a BT executes its children
+from left to right, thus moving a sub-tree leftward implies that it will be executed earlier).
+If it is the leftmost one, this means that it must be executed before its parent
+(i.e. it must be placed at the same depth of the parent but to its left). This operation is done
+in Line 12. We incrementally increase the priority of the subtree in this way, until we find a
+feasible tree. We assume a non conflicting order exists. Cases where this is not the case can be
+constructed, but these problems are beyond the the scope of this paper, see Section V-F
+
+4) Get All Action Templates: Let’s look again at Example 1 and see how the BT in Figure 3(e)
+was created using the proposed approach. In this example, the action templates are summarized
+below with pre- and post-condition: (omitted). The descriptive model of the action MoveTo
+is parametrized over the destination p and the trajectory τ.It requires that the trajectory
+is collision free (τ ⊆ CollFree, with CollFree collision-free set). As effect the action MoveTo
+places the robot at p (i.e. or = p); The descriptive model of the action Pick is parametrized
+over object i. It requires having the end effector free (i.e. h = ∅) and the robot to be in a neighbourhood Noi
+of the object i. (i.e. or ∈Noi ). As effect the action Pick sets the object in the end effector to
+i (i.e h = i); Finally, the descriptive model of the action Place is parametrized over object i and
+final position p. It requires the robot to hold i, (i.e. h = i), and the robot to be in the neighbourhood
+of the final position p. As effect the action Place places the object i at p (i.e. oi = p)

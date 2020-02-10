@@ -16,20 +16,13 @@
 .. image:: images/lifecycle.gif
 """
 
-##############################################################################
-# Imports
-##############################################################################
-
 import argparse
 import py_trees
 import time
 
 import py_trees.console as console
-
-##############################################################################
-# Classes
-##############################################################################
-
+from py_trees.common import Status
+from py_trees.behaviour import Behaviour
 
 def description():
     content = "Demonstrates a typical day in the life of a behaviour.\n\n"
@@ -65,7 +58,7 @@ def command_line_argument_parser():
                                    )
 
 
-class Counter(py_trees.behaviour.Behaviour):
+class Counter(Behaviour):
     """
     Simple counting behaviour that facilitates the demonstration of a behaviour in
     the demo behaviours lifecycle program.
@@ -99,8 +92,8 @@ class Counter(py_trees.behaviour.Behaviour):
         Increment the counter and decide upon a new status result for the behaviour.
         """
         self.counter += 1
-        new_status = py_trees.common.Status.SUCCESS if self.counter == 3 else py_trees.common.Status.RUNNING
-        if new_status == py_trees.common.Status.SUCCESS:
+        new_status = Status.SUCCESS if self.counter == 3 else Status.RUNNING
+        if new_status == Status.SUCCESS:
             self.feedback_message = "counting...{0} - phew, thats enough for today".format(self.counter)
         else:
             self.feedback_message = "still counting"
@@ -138,3 +131,6 @@ def main():
     except KeyboardInterrupt:
         print("")
         pass
+
+if __name__ == "__main__":
+    main()
