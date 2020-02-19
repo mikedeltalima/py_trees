@@ -49,7 +49,6 @@ def plan_tree(goal_conditions, actions, current_state):
                 tree = increase_priority(tree, new_sub_tree)
 
 
-
 def main():
     root = Sequence("Sequence")
 
